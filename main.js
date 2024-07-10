@@ -2,7 +2,7 @@
 let newsList = [];
 const getLatestNews = async () => {
     //const url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
-    const url = new URL(` https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr`);
+    const url = new URL(` https://codingnoona-project3.netlify.app/top-headlines?country=kr`);
     console.log("URL", url);
     const response = await fetch(url);
     const data = await response.json();
