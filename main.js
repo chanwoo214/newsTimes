@@ -1,8 +1,8 @@
-const API_KEY = `80c8e3a6adbd41ba9dff4cc46dbc52c8`;
+//const API_KEY = `80c8e3a6adbd41ba9dff4cc46dbc52c8`;
 let newsList = [];
 const getLatestNews = async () => {
-    const url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
-    //const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr`);
+    //const url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
+    const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr`);
     console.log("URL", url);
     const response = await fetch(url);
     const data = await response.json();
