@@ -1,5 +1,10 @@
 //const API_KEY = `80c8e3a6adbd41ba9dff4cc46dbc52c8`;
 let newsList = [];
+const menus = document.querySelectorAll(".menus button, .side-menu-list button")//bringing all the buttons in menus tab querySelectorAll does this
+console.log("buttons", menus)
+menus.forEach(menu => menu.addEventListener("click", (event) => getNewsByCategory(event)));
+
+
 const getLatestNews = async () => {
     //const url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
     const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr`);
@@ -10,6 +15,42 @@ const getLatestNews = async () => {
     render(); // only can be rendered after getting the newsList so call the function here
     console.log("data", newsList);
 }
+
+const getNewsByCategory = async (event) => {
+    // to know which category has been selected, we need to call the event
+    const category = event.target.textContent.toLowerCase();
+    //console.log("category", category);
+    // in order to get news, we need url of those news
+    //const url = new URL(`https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`);
+    const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr&category=${category}`);
+    const response = await fetch(url);
+    const data = await response.json();
+    //console.log("ddd", data)
+    newsList = data.articles; // before rendering, we need put those articles into the data
+    render();
+};
+
+const openSearchBox = () => {
+    let inputArea = document.getElementById("input-area");
+    if (inputArea.style.display === "inline") {
+        inputArea.style.display = "none";
+    } else {
+        inputArea.style.display = "inline";
+    }
+};
+
+const getNewsByKeyword = async () => {
+    // get keyword from the input box which is the value inside the search-input box
+    const keyword = document.getElementById("search-input").value;
+    //console.log("ggg", keyword);
+    //const url = new URL (`https://newsapi.org/v2/top-headlines?country=us&q=${keyword}&apiKey=${API_KEY}`);
+    const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr&q=${keyword}`);
+    const response = await fetch(url);
+    const data = await response.json();
+    newsList = data.articles;
+    //console.log("news",data)
+    render();
+};
 
 const render = () => {
     const newsHTML = newsList.map(news =>
@@ -37,14 +78,8 @@ const render = () => {
 
     document.getElementById('news-board').innerHTML = newsHTML;
 }
-const openSearchBox = () => {
-    let inputArea = document.getElementById("input-area");
-    if (inputArea.style.display === "inline") {
-        inputArea.style.display = "none";
-    } else {
-        inputArea.style.display = "inline";
-    }
-};
+getLatestNews();
+
 const openNav = () => {
     document.getElementById("mySideNav").style.width = "250px";
 };
@@ -52,4 +87,3 @@ const openNav = () => {
 const closeNav = () => {
     document.getElementById("mySideNav").style.width = "0";
 };
-getLatestNews();
