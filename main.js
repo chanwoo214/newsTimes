@@ -1,11 +1,11 @@
-const API_KEY = `80c8e3a6adbd41ba9dff4cc46dbc52c8`;
+//const API_KEY = `80c8e3a6adbd41ba9dff4cc46dbc52c8`;
 let newsList = [];
 const menus = document.querySelectorAll(".menus button, .side-menu-list button")//bringing all the buttons in menus tab querySelectorAll does this
 console.log("buttons", menus)
 menus.forEach(menu => menu.addEventListener("click", (event) => getNewsByCategory(event)));
 
-let url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`)
-//let url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr`);
+//let url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`)
+let url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr`);
 
 const getNews = async () => {
     try {
@@ -29,15 +29,15 @@ const getNews = async () => {
 };
 
 const getLatestNews = async () => {
-    url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
-    //url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr`);
+    //url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
+    url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr`);
     getNews();
 }
 
 const getNewsByCategory = async (event) => {
     const category = event.target.textContent.toLowerCase();
-    url = new URL(`https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`);
-    //url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr&category=${category}`);
+    //url = new URL(`https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`);
+    url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr&category=${category}`);
     getNews();
 };
 
@@ -65,8 +65,8 @@ const openSearchBox = () => {
 
 const getNewsByKeyword = async () => {
     const keyword = document.getElementById("search-input").value;
-    url = new URL(`https://newsapi.org/v2/top-headlines?country=us&q=${keyword}&apiKey=${API_KEY}`);
-    //url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr&q=${keyword}`);
+    //url = new URL(`https://newsapi.org/v2/top-headlines?country=us&q=${keyword}&apiKey=${API_KEY}`);
+    url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr&q=${keyword}`);
     getNews();
 };
 
