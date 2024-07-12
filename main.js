@@ -32,11 +32,24 @@ const getNewsByCategory = async (event) => {
 
 const openSearchBox = () => {
     let inputArea = document.getElementById("input-area");
+    let searchInput = document.getElementById("search-input");
+
+    inputArea.addEventListener("keypress", function (event){
+        if (event.key === "Enter") {
+            getNewsByKeyword();
+        }
+    });
+
     if (inputArea.style.display === "inline") {
         inputArea.style.display = "none";
     } else {
         inputArea.style.display = "inline";
     }
+
+    //clears the input search box when cursor clicks 
+    searchInput.addEventListener("focus", function () {
+        searchInput.value = "";
+    });
 };
 
 const getNewsByKeyword = async () => {
