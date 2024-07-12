@@ -1,40 +1,51 @@
-//const API_KEY = `80c8e3a6adbd41ba9dff4cc46dbc52c8`;
+const API_KEY = `80c8e3a6adbd41ba9dff4cc46dbc52c8`;
 let newsList = [];
 const menus = document.querySelectorAll(".menus button, .side-menu-list button")//bringing all the buttons in menus tab querySelectorAll does this
 console.log("buttons", menus)
 menus.forEach(menu => menu.addEventListener("click", (event) => getNewsByCategory(event)));
 
+let url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`)
+//let url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr`);
+
+const getNews = async () => {
+    try {
+        const response = await fetch(url);
+
+        const data = await response.json();
+        if (response.status === 200) {
+            if (data.articles.length ===0){
+                throw new Error ("No results found");
+            }
+            newsList = data.articles;
+            render();
+        }   else {
+            throw new Error (data.message);
+        }
+
+    } catch (error) {
+        errorRender(error.message);
+    }
+
+};
 
 const getLatestNews = async () => {
-    //const url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
-    const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr`);
-    console.log("URL", url);
-    const response = await fetch(url);
-    const data = await response.json();
-    newsList = data.articles;
-    render(); // only can be rendered after getting the newsList so call the function here
-    console.log("data", newsList);
+    url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
+    //url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr`);
+    getNews();
 }
 
 const getNewsByCategory = async (event) => {
-    // to know which category has been selected, we need to call the event
     const category = event.target.textContent.toLowerCase();
-    //console.log("category", category);
-    // in order to get news, we need url of those news
-    //const url = new URL(`https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`);
-    const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr&category=${category}`);
-    const response = await fetch(url);
-    const data = await response.json();
-    //console.log("ddd", data)
-    newsList = data.articles; // before rendering, we need put those articles into the data
-    render();
+    url = new URL(`https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`);
+    //url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr&category=${category}`);
+    getNews();
 };
 
 const openSearchBox = () => {
     let inputArea = document.getElementById("input-area");
     let searchInput = document.getElementById("search-input");
 
-    inputArea.addEventListener("keypress", function (event){
+    inputArea.addEventListener("keypress", function (event) {
         if (event.key === "Enter") {
             getNewsByKeyword();
         }
@@ -53,16 +64,10 @@ const openSearchBox = () => {
 };
 
 const getNewsByKeyword = async () => {
-    // get keyword from the input box which is the value inside the search-input box
     const keyword = document.getElementById("search-input").value;
-    //console.log("ggg", keyword);
-    //const url = new URL (`https://newsapi.org/v2/top-headlines?country=us&q=${keyword}&apiKey=${API_KEY}`);
-    const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr&q=${keyword}`);
-    const response = await fetch(url);
-    const data = await response.json();
-    newsList = data.articles;
-    //console.log("news",data)
-    render();
+    url = new URL(`https://newsapi.org/v2/top-headlines?country=us&q=${keyword}&apiKey=${API_KEY}`);
+    //url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr&q=${keyword}`);
+    getNews();
 };
 
 const render = () => {
@@ -87,10 +92,19 @@ const render = () => {
                         ${news.source.name || "no source"} * ${moment(news.publishedAt).fromNow()}
                     </div>
                 </div>
-            </div>` ).join(''); // join(') gets rid of the comma which is the separator between element in the array and concatenates the elements in the array and changes to string type
+            </div>` ).join('');
 
     document.getElementById('news-board').innerHTML = newsHTML;
+};
+
+const errorRender = (errorMessage) => {
+  const errorHTML =  ` <div class="alert alert-danger" role="alert">
+ ${errorMessage}
+</div>`
+
+document.getElementById("news-board").innerHTML = errorHTML;
 }
+
 getLatestNews();
 
 const openNav = () => {
