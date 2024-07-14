@@ -136,3 +136,24 @@
 .col-lg-8 {
     margin-top: 1em
 }
+
+.pagination-nav {
+    display: flex;
+    justify-content: center;
+
+}
+
+.pagination {
+    margin-top: 1em;
+}
+
+.page-item.active .page-link {
+    background-color: aqua;
+    color: black;
+    border-color: black;
+}
+
+.page-link {
+    color: black;
+    background-color: beige;
+}
