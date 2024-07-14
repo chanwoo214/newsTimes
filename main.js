@@ -1,17 +1,15 @@
 //const API_KEY = `80c8e3a6adbd41ba9dff4cc46dbc52c8`;
 let newsList = [];
-let totalResults = 0;
 let page = 1;
-const pageSize = 10;
-const groupSize = 5;
+const PAGE_SIZE = 10;
 let totalPages = 1;
 
 const menus = document.querySelectorAll(".menus button, .side-menu-list button")//bringing all the buttons in menus tab querySelectorAll does this
-console.log("buttons", menus)
+//console.log("buttons", menus)
 menus.forEach(menu => menu.addEventListener("click", (event) => getNewsByCategory(event)));
 
-//let url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`)
-let url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr&pageSize=${pageSize}`);
+//let url = new URL(`https://newsapi.org/v2/top-headlines?country=us&pageSize=${pageSize}&apiKey=${API_KEY}`)
+let url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr&pageSize=${PAGE_SIZE}`);
 
 
 
@@ -23,9 +21,9 @@ const getNews = async () => {
 
         const response = await fetch(url);
         const data = await response.json();
-        //console.log("ddd", data.totalResults);
+        console.log("ddd", data.totalResults);
         if (response.status === 200) {
-            if (data.totalResults === 0) {
+            if (data.totalResults == 0) {
                 page = 0;
                 totalPages = 0;
                 paginationRender();
@@ -33,12 +31,10 @@ const getNews = async () => {
             }
 
             newsList = data.articles;
-            totalPages = Math.ceil(data.totalResults / pageSize);
-            console.log("pagesize", pageSize);
-            console.log("totalPages", totalPages);
-            console.log("totalresults",data.totalResults)
+            totalPages = Math.ceil(data.totalResults / PAGE_SIZE);
             render();
             paginationRender();
+
         } else {
             page = 0;
             totalPages = 0;
@@ -49,22 +45,24 @@ const getNews = async () => {
     } catch (error) {
         errorRender(error.message);
         page = 0;
-        totalPages =0;
+        totalPages = 0;
         paginationRender();
     }
 
 };
 
 const getLatestNews = async () => {
-    //url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
-    url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr`);
+    page = 1;
+    //url = new URL(`https://newsapi.org/v2/top-headlines?country=us&pageSize=${pageSize}&apiKey=${API_KEY}`);
+    url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr&pageSize=${PAGE_SIZE}`);
     await getNews();
 }
 
 const getNewsByCategory = async (event) => {
     const category = event.target.textContent.toLowerCase();
-    //url = new URL(`https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`);
-    url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr&category=${category}`);
+    page = 1;
+    //url = new URL(`https://newsapi.org/v2/top-headlines?country=us&category=${category}&pageSize=${pageSize}&apiKey=${API_KEY}`);
+    url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr&category=${category}&pageSize=${PAGE_SIZE}`);
     await getNews();
 };
 
@@ -92,14 +90,15 @@ const openSearchBox = () => {
 
 const getNewsByKeyword = async () => {
     const keyword = document.getElementById("search-input").value;
-    //url = new URL(`https://newsapi.org/v2/top-headlines?country=us&q=${keyword}&apiKey=${API_KEY}`);
-    url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr&q=${keyword}`);
+    page = 1;
+    //url = new URL(`https://newsapi.org/v2/top-headlines?country=us&q=${keyword}&pageSize=${pageSize}&q=${keyword}&apiKey=${API_KEY}`);
+    url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr&pageSize=${PAGE_SIZE}&q=${keyword}`);
     await getNews();
 };
 
 const render = () => {
-    const newsHTML = newsList.map(news =>
-        `<div class="row news">
+    const newsHTML = newsList.map(news =>{
+        return `<div class="row news">
                     <div class="col-lg-4">
             <img class="news-img"
                 src="${news.urlToImage ||
@@ -110,16 +109,16 @@ const render = () => {
         }</a>
                     <p>
                         ${news.description == null || news.description == ""
-            ? "내용없음"
-            : news.description.length > 200
-                ? news.description.substring(0, 200) + "..."
-                : news.description
-        }</p>
+                    ? "내용없음"
+                    : news.description.length > 200
+                    ? news.description.substring(0, 200) + "..."
+                    : news.description
+                    }</p>
                     <div>
-                        ${news.source.name || "no source"} * ${moment(news.publishedAt).fromNow()}
+                    ${news.source.name || "no source"} * ${moment(news.publishedAt).fromNow()}
                     </div>
                 </div>
-            </div>` ).join('');
+            </div>` }).join('');
 
     document.getElementById('news-board').innerHTML = newsHTML;
 };
@@ -127,12 +126,12 @@ const render = () => {
 
 const paginationRender = () => {
     let paginationHTML = '';
-    const pageGroup = Math.ceil(page / 5);
-    const lastPage = pageGroup * 5;
+    let pageGroup = Math.ceil(page / 5);
+    let lastPage = pageGroup * 5;
     if (lastPage > totalPages) {
         lastPage = totalPages;
     }
-    const firstPage = lastPage - (groupSize - 1) <= 0 ? 1 : lastPage - (groupSize - 1);
+    let firstPage = lastPage - 4 <= 0 ? 1 : lastPage - 4;
 
     if (page > 1) {
         paginationHTML = `<li class="page-item" onclick="moveToPage(1)">
@@ -141,21 +140,21 @@ const paginationRender = () => {
                           <li class="page-item" onclick="moveToPage(${page - 1})">
                             <a class="page-link" href='#js-bottom'>&lt;</a>
                           </li>`;
-      }
-      for (let i = firstPage; i <= lastPage; i++) {
+    }
+    for (let i = firstPage; i <= lastPage; i++) {
         paginationHTML += `<li class="page-item ${i == page ? "active" : ""}" >
                             <a class="page-link" href='#js-bottom' onclick="moveToPage(${i})" >${i}</a>
                            </li>`;
-      }
-    
-      if (page < totalPages) {
+    }
+
+    if (page < totalPages) {
         paginationHTML += `<li class="page-item" onclick="moveToPage(${page + 1})">
                             <a  class="page-link" href='#js-program-detail-bottom'>&gt;</a>
                            </li>
                            <li class="page-item" onclick="moveToPage(${totalPages})">
                             <a class="page-link" href='#js-bottom'>&gt;&gt;</a>
                            </li>`;
-      }
+    }
     document.querySelector(".pagination").innerHTML = paginationHTML;
 
 };
@@ -182,5 +181,6 @@ const openNav = () => {
 const closeNav = () => {
     document.getElementById("mySideNav").style.width = "0";
 };
+
 
 getLatestNews();
